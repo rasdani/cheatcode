@@ -105,7 +105,8 @@ def main():
         print("CheatCode initialized and database stored in .cheatcode/db.")
 
     elif args.command == "chat":
-        root_dir = args.directory
+        # root_dir = args.directory
+        root_dir = "/home/rasdani/git/mp-transformer"
         embeddings = OpenAIEmbeddings(disallowed_special=())
 
         db_path = os.path.join(root_dir, ".cheatcode/db")
