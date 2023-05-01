@@ -10,7 +10,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY') # free credits
-OPENAI_API_KEY_GPT4 = os.environ.get('OPENAI_API_KEY_GPT4') # waitlist access
+# OPENAI_API_KEY_GPT4 = os.environ.get('OPENAI_API_KEY_GPT4') # waitlist access
 MAX_TOKENS_LIMIT = 10000 # don't wanna be broke $$$
 
 
@@ -27,21 +27,30 @@ def load_docs(root_dir, changed_files_only=False):
     """
     print("Loading source files.")
     docs = []
-
-    if changed_files_only:
-        git_command = "git diff --name-only HEAD"
-        changed_files = subprocess.check_output(git_command.split(), cwd=root_dir).decode("utf-8").splitlines()
-
     for dirpath, dirnames, filenames in os.walk(root_dir):
         for file in filenames:
             if file.endswith('.py') and '/.venv/' not in dirpath:
-                file_path = os.path.join(dirpath, file)
-                if not changed_files_only or file_path in changed_files:
-                    try:
-                        loader = TextLoader(file_path, encoding='utf-8')
-                        docs.extend(loader.load_and_split())
-                    except Exception as e:
-                        print(f"Error loading file {file_path}: {e}")
+                try: 
+                    loader = TextLoader(os.path.join(dirpath, file), encoding='utf-8')
+                    docs.extend(loader.load_and_split())
+                except Exception as e: 
+                    print(f"Error loading file {file}: {e}")
+
+    ### EXPERIMENTAL
+    # if changed_files_only:
+    #     git_command = "git diff --name-only HEAD"
+    #     changed_files = subprocess.check_output(git_command.split(), cwd=root_dir).decode("utf-8").splitlines()
+
+    # for dirpath, dirnames, filenames in os.walk(root_dir):
+    #     for file in filenames:
+    #         if file.endswith('.py') and '/.venv/' not in dirpath:
+    #             file_path = os.path.join(dirpath, file)
+    #             if not changed_files_only or file_path in changed_files:
+    #                 try:
+    #                     loader = TextLoader(file_path, encoding='utf-8')
+    #                     docs.extend(loader.load_and_split())
+    #                 except Exception as e:
+    #                     print(f"Error loading file {file_path}: {e}")
     return docs
 
 
@@ -103,8 +112,8 @@ def setup_qa(root_dir):
     db = FAISS.load_local(db_path, embeddings=embeddings)
     retriever = setup_retriever(db)
 
-    # model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model='gpt-3.5-turbo')
-    model = ChatOpenAI(openai_api_key=OPENAI_API_KEY_GPT4, model='gpt-4')
+    model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model='gpt-3.5-turbo')
+    # model = ChatOpenAI(openai_api_key=OPENAI_API_KEY_GPT4, model='gpt-4')
 
     qa = setup_chain(model, retriever)
     return qa
