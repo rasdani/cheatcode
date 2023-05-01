@@ -12,7 +12,7 @@ Fleshed out version of my [proof of concept](https://github.com/rasdani/chat-you
 </div>
 
 Embeds all `.py` files in a given repo and stores them in a VectorDB.
-Finds cosine similiar source files to your question and stuffs them into ChatGPT's prompt using LangChain's ConversationalRetrivalChain.
+Finds cosine similiar source files to your question and stuffs them into ChatGPT's prompt using LangChain's ConversationalRetrievalChain.
 
 ## setup
 Install dependencies with `pip install -r requirements.txt`.
