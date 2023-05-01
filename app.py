@@ -1,35 +1,29 @@
-import os
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from cheatcode import setup_chain, setup_retriever, OpenAIEmbeddings, ChatOpenAI
-from langchain.vectorstores import FAISS
+from starlette.responses import FileResponse
 from pydantic import BaseModel
+import webbrowser
 import uvicorn
 
-# Set OpenAI API keys as constants here, reading from OS env variables.
-FREE_OPENAI_API_KEY = os.getenv("FREE_OPENAI_API_KEY")
-GPT4_OPENAI_API_KEY = os.getenv("OPENAI_API_KEY_GPT4")
+from cheatcode import setup_qa
+
 
 root_dir = '/home/rasdani/git/mp-transformer'
-embeddings = OpenAIEmbeddings(disallowed_special=())
-
-db_path = os.path.join(root_dir, ".cheatcode/db")
-db = FAISS.load_local(db_path, embeddings=embeddings)
-model = ChatOpenAI(openai_api_key=FREE_OPENAI_API_KEY, model='gpt-3.5-turbo')
-# model = ChatOpenAI(openai_api_key=GPT4_OPENAI_API_KEY, model='gpt-4')
-retriever = setup_retriever(db)
-qa = setup_chain(model, retriever)
+qa = setup_qa(root_dir)
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static/static"), name="static")
+# templates = Jinja2Templates(directory="templates")
 
 
 class ChatInput(BaseModel):
     question: str
 
 @app.get("/")
-async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+async def serve_index(request: Request):
+    # return templates.TemplateResponse("index.html", {"request": request})
+    return FileResponse("static/index.html")
 
 @app.post("/chat")
 async def chat(chat_input: ChatInput):
@@ -40,5 +34,7 @@ async def chat(chat_input: ChatInput):
     print(result["source_documents"])
     return {"answer": result['answer'], "source_documents": result['source_documents']}
 
-# if __name__ == '__main__':
-#     uvicorn.run(app, host="localhost", port=8000)
+if __name__ == '__main__':
+    print("Serving on http://localhost:8000")
+    webbrowser.open("http://localhost:8000")
+    uvicorn.run(app, host="localhost", port=8000)
