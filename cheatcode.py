@@ -10,6 +10,7 @@ from langchain.chains import ConversationalRetrievalChain
 
 FREE_OPENAI_API_KEY=os.environ['OPENAI_API_KEY']
 GPT4_OPENAI_API_KEY=os.environ['OPENAI_API_KEY_GPT4']
+MAX_TOKENS_LIMIT=10000
 
 def load_docs(root_dir):
     print("Loading source files.")
@@ -38,13 +39,13 @@ def setup_retriever(db):
     retriever.search_kwargs['distance_metric'] = 'cos'
     retriever.search_kwargs['fetch_k'] = 20
     retriever.search_kwargs['maximal_marginal_relevance'] = True
-    retriever.search_kwargs['k'] = 20
+    retriever.search_kwargs['k'] = 3
     return retriever
 
 
 def setup_chain(model, retriever):
     print("Setting up chain.")
-    return ConversationalRetrievalChain.from_llm(model, retriever=retriever)
+    return ConversationalRetrievalChain.from_llm(model, retriever=retriever, max_tokens_limit=MAX_TOKENS_LIMIT, return_source_documents=True)
 
 
 def ask_questions(questions, qa):
@@ -69,8 +70,11 @@ def interactive_chat(qa):
             break
 
         result = qa({"question": question, "chat_history": chat_history})
+        breakpoint()
         chat_history.append((question, result['answer']))
         print(f"**Answer**: {result['answer']} \n")
+        print(f"Source documents: {result['source_documents']} \n")
+        print(f"**Chat history**: {chat_history} \n")
 
 
 def main():
@@ -112,8 +116,8 @@ def main():
         db_path = os.path.join(root_dir, ".cheatcode/db")
         db = FAISS.load_local(db_path, embeddings=embeddings)
         retriever = setup_retriever(db)
-        # model = ChatOpenAI(openai_api_key=FREE_OPENAI_API_KEY, model='gpt-3.5-turbo')
-        model = ChatOpenAI(openai_api_key=GPT4_OPENAI_API_KEY, model='gpt-4')
+        model = ChatOpenAI(openai_api_key=FREE_OPENAI_API_KEY, model='gpt-3.5-turbo')
+        # model = ChatOpenAI(openai_api_key=GPT4_OPENAI_API_KEY, model='gpt-4')
         qa = setup_chain(model, retriever)
 
         interactive_chat(qa)
