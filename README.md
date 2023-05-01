@@ -7,8 +7,10 @@ ChatGPT for your codebase. Your cheatcode for productivity 🚀.
 
 Fleshed out version of my [proof of concept](https://github.com/rasdani/chat-your-code).
 
-![Demo Pic](./demo.png)
-
+<!-- ![Demo Pic](./demo.png) -->
+<div style="text-align: center;">
+    <img src="./demo.png" alt="demo pic" width="368" height="472" />
+</div>
 
 ## run CLI app
 
