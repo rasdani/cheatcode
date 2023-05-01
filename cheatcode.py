@@ -195,8 +195,7 @@ def main():
         print("CheatCode initialized and database stored in .cheatcode/db.")
 
     elif args.command == "chat":
-        # root_dir = args.directory
-        root_dir = "/home/rasdani/git/mp-transformer"
+        root_dir = args.directory
         qa = setup_qa(root_dir)
 
         interactive_chat(qa)
