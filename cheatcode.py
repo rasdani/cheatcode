@@ -125,21 +125,6 @@ def setup_qa(root_dir):
     return qa
 
 
-def ask_questions(questions, qa):
-    """
-    Ask a list of questions and print the answers.
-
-    Args:
-        questions (list): List of questions to ask.
-        qa (ConversationalRetrievalChain): Conversational retrieval chain instance.
-    """
-    chat_history = []
-    for question in questions:
-        result = qa({"question": question, "chat_history": chat_history})
-        chat_history.append((question, result["answer"]))
-        print(f"-> **Question**: {question} \n")
-        print(f"**Answer**: {result['answer']} \n")
-
 
 def init_cheatcode_directory():
     """
@@ -158,7 +143,6 @@ def interactive_chat(qa):
     """
     print("Starting interactive chat. Type 'exit' to end the chat.")
     chat_history = []
-
     while True:
         question = input("-> **Question**: ")
         if question.lower() == "exit":
@@ -198,7 +182,7 @@ def main():
     if args.command == "init":
         root_dir = args.directory
         db_path = os.path.join(root_dir, ".cheatcode/db")
-        if os.path.exists(db_path):
+        if os.path.exists(os.path.join(db_path, "index.pkl")):
             print("CheatCode already initialized.")
             return
         init_cheatcode_directory()

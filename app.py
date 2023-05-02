@@ -21,12 +21,13 @@ class ChatInput(BaseModel):
 async def serve_index(request: Request):
     return FileResponse("static/index.html")
 
-
 @app.post("/chat")
 async def chat(chat_input: ChatInput):
+    chat_history = []
     question = chat_input.question
     print("QUESTION", question)
-    result = qa({"question": question, "chat_history": []})
+    result = qa({"question": question, "chat_history": chat_history})
+    chat_history.append((question, result["answer"]))
     print(result["chat_history"])
     print(result["source_documents"])
     return {"answer": result["answer"], "source_documents": result["source_documents"]}

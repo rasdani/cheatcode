@@ -13,13 +13,14 @@ Fleshed out version of my [proof of concept](https://github.com/rasdani/chat-you
 
 Embeds all `.py` files in a given repo and stores them in a VectorDB.
 Finds cosine similiar source files to your question and stuffs them into ChatGPT's prompt using LangChain's ConversationalRetrievalChain.
+Uncomment GPT4 for more accurate answers.
 
 ## setup
 Install dependencies with `pip install -r requirements.txt`.
 Set `OPENAI_API_KEY` in your environment variables.
 
 ## run CLI app
-`python cheatcode.py init` searches recusively for `.py` files in your current directory and creates a `.cheatcode` folder, which stores your embedded source code.
+`python cheatcode.py init` searches recursively for `.py` files in your current directory and creates a `.cheatcode` folder, which stores your embedded source code.
 (Or specify a path with `python cheatcode.py init <path>`)
 
 
@@ -38,3 +39,4 @@ You need to init your codebase first.
  - [ ] optimtize use of context window
  - [ ] estimate API cost
  - [ ] add Agents
+ - [ ] LangChain memory instead of chat history
