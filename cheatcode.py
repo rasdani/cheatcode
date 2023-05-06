@@ -118,8 +118,8 @@ def setup_qa(root_dir):
     db = FAISS.load_local(db_path, embeddings=embeddings)
     retriever = setup_retriever(db)
 
-    model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo")
-    # model = ChatOpenAI(openai_api_key=OPENAI_API_KEY_GPT4, model='gpt-4')
+    # model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo")
+    model = ChatOpenAI(openai_api_key=OPENAI_API_KEY, model='gpt-4')
 
     qa = setup_chain(model, retriever)
     return qa

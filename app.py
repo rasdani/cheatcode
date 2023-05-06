@@ -12,6 +12,7 @@ from cheatcode import setup_qa
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static/static"), name="static")
 
+chat_history = []
 
 class ChatInput(BaseModel):
     question: str
@@ -23,13 +24,15 @@ async def serve_index(request: Request):
 
 @app.post("/chat")
 async def chat(chat_input: ChatInput):
-    chat_history = []
+    global chat_history # works so don't complain
     question = chat_input.question
-    print("QUESTION", question)
+    # print("QUESTION", question)
+    print("SENDING REQUEST...")
     result = qa({"question": question, "chat_history": chat_history})
     chat_history.append((question, result["answer"]))
+    # chat_history.append((question, result["answer"], result["source_documents"]))
     print(result["chat_history"])
-    print(result["source_documents"])
+    # print(result["source_documents"])
     return {"answer": result["answer"], "source_documents": result["source_documents"]}
 
 
